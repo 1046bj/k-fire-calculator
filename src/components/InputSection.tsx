@@ -126,17 +126,18 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: 'targetAssets' | 'currentAssets' | 'monthlySavings',
     value: string
   ) => {
-    // 숫자와 소수점, 콤마만 허용
-    const cleaned = value.replace(/[^0-9,]/g, '');
+    // 숫자만 허용 (콤마 포함 제거)
+    const rawValue = value.replace(/[^0-9]/g, '');
     
-    // 콤마 제거 후 숫자 파싱
-    const numValue = parseFormattedNumber(cleaned);
+    // 숫자 파싱
+    const numValue = rawValue === '' ? 0 : parseInt(rawValue, 10);
+    
+    // 상태 업데이트 (숫자 값)
+    handleInputChange(field, numValue);
     
     // 포맷팅된 값으로 표시
-    const formatted = formatNumberWithCommas(numValue);
-    
+    const formatted = rawValue === '' ? '' : formatNumberWithCommas(numValue);
     setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
-    handleInputChange(field, numValue);
   };
 
   const handlePortfolioChange = (field: keyof Portfolio, value: number) => {
@@ -147,17 +148,18 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: keyof Portfolio,
     value: string
   ) => {
-    // 숫자와 소수점, 콤마만 허용
-    const cleaned = value.replace(/[^0-9,]/g, '');
+    // 숫자만 허용 (콤마 포함 제거)
+    const rawValue = value.replace(/[^0-9]/g, '');
     
-    // 콤마 제거 후 숫자 파싱
-    const numValue = parseFormattedNumber(cleaned);
+    // 숫자 파싱
+    const numValue = rawValue === '' ? 0 : parseInt(rawValue, 10);
+    
+    // 상태 업데이트 (숫자 값)
+    handlePortfolioChange(field, numValue);
     
     // 포맷팅된 값으로 표시
-    const formatted = formatNumberWithCommas(numValue);
-    
+    const formatted = rawValue === '' ? '' : formatNumberWithCommas(numValue);
     setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
-    handlePortfolioChange(field, numValue);
   };
 
   const handleCalculate = () => {
@@ -184,8 +186,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={userInput.currentAge}
-              onChange={(e) => handleInputChange('currentAge', Number(e.target.value))}
+              onChange={(e) => handleInputChange('currentAge', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.currentAge && (
@@ -202,8 +206,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={userInput.targetAge}
-              onChange={(e) => handleInputChange('targetAge', Number(e.target.value))}
+              onChange={(e) => handleInputChange('targetAge', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.targetAge && (
@@ -220,6 +226,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.targetAssets}
               onChange={(e) => handleFormattedInputChange('targetAssets', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -238,6 +246,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.currentAssets}
               onChange={(e) => handleFormattedInputChange('currentAssets', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -256,6 +266,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.monthlySavings}
               onChange={(e) => handleFormattedInputChange('monthlySavings', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -293,9 +305,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </div>
             <input
               type="number"
+              inputMode="decimal"
               step="0.1"
               value={userInput.expectedReturnRate}
-              onChange={(e) => handleInputChange('expectedReturnRate', Number(e.target.value))}
+              onChange={(e) => handleInputChange('expectedReturnRate', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.expectedReturnRate && (
@@ -321,6 +334,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.pension}
               onChange={(e) => handleFormattedPortfolioChange('pension', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -342,6 +357,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.irp}
               onChange={(e) => handleFormattedPortfolioChange('irp', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -369,6 +386,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.isa}
               onChange={(e) => handleFormattedPortfolioChange('isa', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -390,6 +409,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.domestic}
               onChange={(e) => handleFormattedPortfolioChange('domestic', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -408,6 +429,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             </label>
             <input
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formattedValues.overseas}
               onChange={(e) => handleFormattedPortfolioChange('overseas', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
