@@ -112,6 +112,12 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     setUserInput((prev) => ({ ...prev, [field]: value }));
   };
 
+  // 통화 필드 표시값 포맷팅 (모바일 호환)
+  const formatCurrencyDisplay = (value: number): string => {
+    if (value === 0) return '';
+    return value.toLocaleString('ko-KR');
+  };
+
   const handleFormattedInputChange = (
     field: 'targetAssets' | 'currentAssets' | 'monthlySavings',
     value: string
@@ -126,6 +132,12 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
 
   const handlePortfolioChange = (field: keyof Portfolio, value: number) => {
     setPortfolio((prev) => ({ ...prev, [field]: Math.max(0, value) }));
+  };
+
+  // 포트폴리오 필드 표시값 포맷팅 (모바일 호환)
+  const formatPortfolioDisplay = (value: number): string => {
+    if (value === 0) return '';
+    return value.toLocaleString('ko-KR');
   };
 
   const handleFormattedPortfolioChange = (
@@ -205,7 +217,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={userInput.targetAssets === 0 ? '' : userInput.targetAssets.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatCurrencyDisplay(userInput.targetAssets)}
               onChange={(e) => handleFormattedInputChange('targetAssets', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -224,7 +237,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={userInput.currentAssets === 0 ? '' : userInput.currentAssets.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatCurrencyDisplay(userInput.currentAssets)}
               onChange={(e) => handleFormattedInputChange('currentAssets', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -243,7 +257,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={userInput.monthlySavings === 0 ? '' : userInput.monthlySavings.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatCurrencyDisplay(userInput.monthlySavings)}
               onChange={(e) => handleFormattedInputChange('monthlySavings', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -310,7 +325,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={portfolio.pension === 0 ? '' : portfolio.pension.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatPortfolioDisplay(portfolio.pension)}
               onChange={(e) => handleFormattedPortfolioChange('pension', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -332,7 +348,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={portfolio.irp === 0 ? '' : portfolio.irp.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatPortfolioDisplay(portfolio.irp)}
               onChange={(e) => handleFormattedPortfolioChange('irp', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -360,7 +377,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={portfolio.isa === 0 ? '' : portfolio.isa.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatPortfolioDisplay(portfolio.isa)}
               onChange={(e) => handleFormattedPortfolioChange('isa', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -382,7 +400,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={portfolio.domestic === 0 ? '' : portfolio.domestic.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatPortfolioDisplay(portfolio.domestic)}
               onChange={(e) => handleFormattedPortfolioChange('domestic', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -401,7 +420,8 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <input
               type="text"
               inputMode="numeric"
-              value={portfolio.overseas === 0 ? '' : portfolio.overseas.toLocaleString()}
+              pattern="[0-9]*"
+              value={formatPortfolioDisplay(portfolio.overseas)}
               onChange={(e) => handleFormattedPortfolioChange('overseas', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
