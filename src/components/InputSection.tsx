@@ -44,17 +44,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     overseas: 0,
   });
 
-  // 포맷팅된 문자열 상태 (표시용)
-  const [formattedValues, setFormattedValues] = useState({
-    targetAssets: '0',
-    currentAssets: '0',
-    monthlySavings: '100',
-    pension: '0',
-    irp: '0',
-    isa: '0',
-    domestic: '0',
-    overseas: '0',
-  });
+  // 포맷팅 상태 제거 - 직접 숫자 값 사용
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [remainingAmount, setRemainingAmount] = useState(0);
@@ -104,7 +94,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     // Surplus 검증: 합계가 월 저축액보다 크면 차단
     const portfolioTotal = Object.values(portfolio).reduce((sum, val) => sum + val, 0);
     if (portfolioTotal > userInput.monthlySavings) {
-      newErrors.portfolioTotal = `포트폴리오 합계(${formatNumberWithCommas(portfolioTotal)}만원)가 월 저축액(${formatNumberWithCommas(userInput.monthlySavings)}만원)을 초과할 수 없습니다.`;
+      newErrors.portfolioTotal = `포트폴리오 합계(${portfolioTotal.toLocaleString()}만원)가 월 저축액(${userInput.monthlySavings.toLocaleString()}만원)을 초과할 수 없습니다.`;
     }
 
     // 개별 항목 음수 검증
@@ -126,18 +116,9 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: 'targetAssets' | 'currentAssets' | 'monthlySavings',
     value: string
   ) => {
-    // 숫자만 허용 (콤마 포함 제거)
-    const rawValue = value.replace(/[^0-9]/g, '');
-    
-    // 숫자 파싱
-    const numValue = rawValue === '' ? 0 : parseInt(rawValue, 10);
-    
-    // 상태 업데이트 (숫자 값)
+    // 숫자만 추출
+    const numValue = value === '' ? 0 : Number(value.replace(/[^0-9]/g, '')) || 0;
     handleInputChange(field, numValue);
-    
-    // 포맷팅된 값으로 표시
-    const formatted = rawValue === '' ? '' : formatNumberWithCommas(numValue);
-    setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
   };
 
   const handlePortfolioChange = (field: keyof Portfolio, value: number) => {
@@ -148,18 +129,9 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: keyof Portfolio,
     value: string
   ) => {
-    // 숫자만 허용 (콤마 포함 제거)
-    const rawValue = value.replace(/[^0-9]/g, '');
-    
-    // 숫자 파싱
-    const numValue = rawValue === '' ? 0 : parseInt(rawValue, 10);
-    
-    // 상태 업데이트 (숫자 값)
+    // 숫자만 추출
+    const numValue = value === '' ? 0 : Number(value.replace(/[^0-9]/g, '')) || 0;
     handlePortfolioChange(field, numValue);
-    
-    // 포맷팅된 값으로 표시
-    const formatted = rawValue === '' ? '' : formatNumberWithCommas(numValue);
-    setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
   };
 
   const handleCalculate = () => {
@@ -225,11 +197,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               목표 자산 (만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.targetAssets}
-              onChange={(e) => handleFormattedInputChange('targetAssets', e.target.value)}
+              value={userInput.targetAssets}
+              onChange={(e) => handleInputChange('targetAssets', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.targetAssets && (
@@ -245,11 +216,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               현재 자산 (만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.currentAssets}
-              onChange={(e) => handleFormattedInputChange('currentAssets', e.target.value)}
+              value={userInput.currentAssets}
+              onChange={(e) => handleInputChange('currentAssets', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.currentAssets && (
@@ -265,11 +235,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               월 저축액 (만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.monthlySavings}
-              onChange={(e) => handleFormattedInputChange('monthlySavings', e.target.value)}
+              value={userInput.monthlySavings}
+              onChange={(e) => handleInputChange('monthlySavings', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.monthlySavings && (
@@ -333,11 +302,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               연금저축 (월 한도: {LEGAL_LIMITS.PENSION_IRP_MONTHLY}만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.pension}
-              onChange={(e) => handleFormattedPortfolioChange('pension', e.target.value)}
+              value={portfolio.pension}
+              onChange={(e) => handlePortfolioChange('pension', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
@@ -356,11 +324,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               IRP (연금저축 + IRP 합계 한도: {LEGAL_LIMITS.PENSION_IRP_MONTHLY}만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.irp}
-              onChange={(e) => handleFormattedPortfolioChange('irp', e.target.value)}
+              value={portfolio.irp}
+              onChange={(e) => handlePortfolioChange('irp', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
@@ -385,11 +352,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               ISA (월 한도: {LEGAL_LIMITS.ISA_MONTHLY}만원)
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.isa}
-              onChange={(e) => handleFormattedPortfolioChange('isa', e.target.value)}
+              value={portfolio.isa}
+              onChange={(e) => handlePortfolioChange('isa', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
@@ -408,11 +374,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               국내주식
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.domestic}
-              onChange={(e) => handleFormattedPortfolioChange('domestic', e.target.value)}
+              value={portfolio.domestic}
+              onChange={(e) => handlePortfolioChange('domestic', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.domestic && (
@@ -428,11 +393,10 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               해외주식
             </label>
             <input
-              type="text"
+              type="number"
               inputMode="numeric"
-              pattern="[0-9]*"
-              value={formattedValues.overseas}
-              onChange={(e) => handleFormattedPortfolioChange('overseas', e.target.value)}
+              value={portfolio.overseas}
+              onChange={(e) => handlePortfolioChange('overseas', Number(e.target.value) || 0)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.overseas && (
@@ -451,7 +415,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm font-medium text-yellow-800 mb-1">
-                  잔여 금액: {formatNumberWithCommas(remainingAmount)}만원
+                  잔여 금액: {remainingAmount.toLocaleString()}만원
                 </p>
                 <p className="text-xs text-yellow-700">
                   이 금액은 일반 현금 계좌(높은 세금 부과)로 가정됩니다. AI 최적화 플랜은 이 잔여 금액도 효율적으로 투자합니다.
@@ -464,7 +428,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-600" />
               <p className="text-sm font-medium text-red-700">
-                포트폴리오 합계가 월 저축액을 초과합니다. ({formatNumberWithCommas(Math.abs(remainingAmount))}만원 초과)
+                포트폴리오 합계가 월 저축액을 초과합니다. ({Math.abs(remainingAmount).toLocaleString()}만원 초과)
               </p>
             </div>
           </div>
