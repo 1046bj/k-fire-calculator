@@ -1,13 +1,14 @@
-# 한국형 FIRE 시뮬레이터
+# 한국형 파이어(FIRE) 계산기
 
-Next.js 14를 사용하여 구축한 한국형 경제적 자유(FIRE) 시뮬레이터입니다. 사용자의 현재 저축 습관과 AI 절세 최적화 플랜을 비교하여 절세 전략이 자산 증식에 미치는 영향을 시각적으로 보여줍니다.
+연금저축, IRP, ISA 절세 최적화 시뮬레이터로 조기은퇴(FIRE) 목표를 달성하는 최적의 전략을 제시합니다.
 
 ## 주요 기능
 
-- 📊 **사용자 플랜 vs AI 최적화 플랜 비교**: 두 시나리오를 동시에 시뮬레이션하여 자산 성장을 비교
-- 💰 **한국 세법 반영**: 연금저축, IRP, ISA, 해외주식 등에 대한 실제 세법 규칙 적용
-- 📈 **시각화**: Recharts를 사용한 직관적인 자산 성장 그래프
-- 🤖 **AI 리포트**: AI 플랜이 우수한 이유를 상세히 분석
+- 📊 **사용자 플랜 vs AI 최적화 플랜 비교**: 현재 저축 습관과 AI 알고리즘이 제안하는 최적 전략을 시각적으로 비교
+- 💰 **절세 전략 분석**: 연금저축, IRP, ISA의 세액공제 및 과세이연 효과 분석
+- 📈 **자산 성장 시뮬레이션**: 복리 효과를 고려한 장기 자산 성장 예측
+- 🎯 **목표 달성 분석**: FIRE 목표 달성 여부 및 필요한 추가 저축액 계산
+- 🔍 **SEO 최적화**: Google, Naver, Daum, Bing 검색 엔진 최적화
 
 ## 기술 스택
 
@@ -17,69 +18,47 @@ Next.js 14를 사용하여 구축한 한국형 경제적 자유(FIRE) 시뮬레�
 - **Charts**: Recharts
 - **Icons**: Lucide React
 
-## 설치 및 실행
+## 시작하기
+
+### 설치
 
 ```bash
-# 의존성 설치
 npm install
+```
 
-# 개발 서버 실행
+### 개발 서버 실행
+
+```bash
 npm run dev
-
-# 프로덕션 빌드
-npm run build
-npm start
 ```
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
-## 프로젝트 구조
+### 빌드
 
-```
-src/
-├── app/
-│   ├── layout.tsx          # 루트 레이아웃
-│   ├── page.tsx            # 메인 페이지
-│   └── globals.css         # 전역 스타일
-├── components/
-│   ├── InputSection.tsx    # 입력 폼 컴포넌트
-│   ├── ResultChart.tsx     # 차트 컴포넌트
-│   └── AIReport.tsx        # AI 리포트 컴포넌트
-├── lib/
-│   └── simulation.ts       # 시뮬레이션 로직
-└── types/
-    └── index.ts            # TypeScript 타입 정의
+```bash
+npm run build
+npm start
 ```
 
-## 주요 기능 설명
+## 배포
 
-### 1. 입력 및 검증
-- 사용자 기본 정보 입력 (나이, 자산, 저축액, 수익률)
-- 포트폴리오 배분 입력 (연금저축, IRP, ISA, 국내주식, 해외주식)
-- 한국 법정 한도 자동 검증
+### Vercel 배포 (권장)
 
-### 2. 시뮬레이션 로직
-- **세액공제**: 연금저축/IRP 납입액의 13.2% 세액공제를 매년 재투자
-- **ISA 만기 처리**: 3년마다 만기 해지 후 연금저축으로 전환, 추가 세액공제 적용
-- **해외주식 과세이연**: Buy & Hold 전략으로 양도소득세 과세이연 효과
-- **배당소득세**: 해외주식 배당에 15.4% 과세
+1. GitHub에 저장소 푸시
+2. [Vercel](https://vercel.com)에서 프로젝트 import
+3. 자동 배포 완료
 
-### 3. AI 최적화 알고리즘
-Waterfall 방식으로 월 저축액을 다음 우선순위로 배분:
-1. 연금저축: 월 50만원 (세액공제 최대)
-2. IRP: 월 25만원 (합산공제 최대)
-3. ISA: 월 83만원 (3년 만기 전환 최적화)
-4. 연금저축 추가: 월 75만원 (한도 채움)
-5. ISA 추가: 월 83만원 (한도 채움)
-6. 해외주식: 남는 돈 전액 (과세이연)
+자세한 배포 가이드는 `DEPLOYMENT.md`를 참고하세요.
 
-## 한국 법정 한도
+## 검색 엔진 등록
 
-- **연금저축 + IRP: 월 150만원 (연 1,800만원)**
-- **ISA: 월 166만원 (연 2,000만원)**
-- **세액공제율: 13.2%**
-- **ISA 만기 비과세: 순수익 200만원**
-- **ISA 전환 세액공제: 전환 금액의 10% (최대 300만원)**
+배포 후 다음 검색 엔진에 사이트를 등록하세요:
+
+- [Google Search Console](https://search.google.com/search-console)
+- [Naver Search Advisor](https://searchadvisor.naver.com)
+- [Daum 검색 등록](https://register.search.daum.net/index.daum)
+- [Bing Webmaster Tools](https://www.bing.com/webmasters)
 
 ## 라이선스
 
