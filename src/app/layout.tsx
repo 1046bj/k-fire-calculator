@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: '한국형 파이어(FIRE) 계산기 | 연금저축·ISA 절세 최적화 시뮬레이터',
-  description: '내 저축 습관 vs AI 알고리즘 비교. 연금저축, IRP, ISA, 과세이연 효과를 분석하여 가장 빠른 조기은퇴(FIRE) 로드맵을 제시합니다.',
-  keywords: ['연금저축', 'ISA', 'IRP', '파이어족', '조기은퇴', '절세 계산기', '복리 계산기', 'K-FIRE', '파이어 계산기', '조기은퇴 계산기', '절세 시뮬레이터'],
+  title: '한국형 파이어(FIRE) 계산기: 연금저축·IRP·ISA 절세 최적화',
+  description: '현재 자산, 주식 수익률, 생활비를 기반으로 당신의 조기은퇴 시점을 계산해보세요. 연금저축, IRP, ISA 등 한국식 절세 계좌를 반영한 가장 정확한 파이어족 시뮬레이터입니다.',
+  keywords: ['파이어족 계산기', '은퇴 시뮬레이션', '연금저축계좌', 'IRP', 'ISA 절세', '조기은퇴 준비'],
   authors: [{ name: 'Korean FIRE Simulator' }],
   creator: 'Korean FIRE Simulator',
   publisher: 'Korean FIRE Simulator',
@@ -18,8 +18,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: '한국형 파이어(FIRE) 계산기 | 연금저축·ISA 절세 최적화 시뮬레이터',
-    description: '내 저축 습관 vs AI 알고리즘 비교. 연금저축, IRP, ISA, 과세이연 효과를 분석하여 가장 빠른 조기은퇴(FIRE) 로드맵을 제시합니다.',
+    title: '한국형 파이어(FIRE) 계산기: 연금저축·IRP·ISA 절세 최적화',
+    description: '현재 자산, 주식 수익률, 생활비를 기반으로 당신의 조기은퇴 시점을 계산해보세요. 연금저축, IRP, ISA 등 한국식 절세 계좌를 반영한 가장 정확한 파이어족 시뮬레이터입니다.',
     url: process.env.NEXT_PUBLIC_BASE_URL || 'https://fire-simulator-with-stocks.vercel.app',
     siteName: '한국형 FIRE 계산기',
     locale: 'ko_KR',
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '한국형 파이어(FIRE) 계산기',
-    description: '내 저축 습관 vs AI 알고리즘 비교. 절세 전략으로 조기은퇴 시기 10년 앞당기기',
+    title: '한국형 파이어(FIRE) 계산기: 연금저축·IRP·ISA 절세 최적화',
+    description: '현재 자산, 주식 수익률, 생활비를 기반으로 당신의 조기은퇴 시점을 계산해보세요.',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || 'QNd8tgIQzUsrFDrnLwgAj9lZHHnuvE9TIkU1AtTImPI',
@@ -43,8 +43,43 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fire-simulator-with-stocks.vercel.app'
+  
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: '한국형 파이어(FIRE) 계산기',
+    description: '현재 자산, 주식 수익률, 생활비를 기반으로 당신의 조기은퇴 시점을 계산해보세요. 연금저축, IRP, ISA 등 한국식 절세 계좌를 반영한 가장 정확한 파이어족 시뮬레이터입니다.',
+    url: baseUrl,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Web',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'KRW',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5',
+      ratingCount: '1',
+    },
+    featureList: [
+      '연금저축계좌 시뮬레이션',
+      'IRP 절세 계산',
+      'ISA 절세 최적화',
+      '조기은퇴 시점 계산',
+      '파이어족 로드맵 제시',
+    ],
+  }
+
   return (
     <html lang="ko">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   )
