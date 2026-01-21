@@ -112,10 +112,17 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     setUserInput((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 통화 필드 표시값 포맷팅 (모바일 호환)
-  const formatCurrencyDisplay = (value: number): string => {
+  // 통화 필드 표시값 포맷팅 (모바일 호환, 안전장치 포함)
+  const formatCurrencyDisplay = (value: number | undefined | null): string => {
+    if (value === undefined || value === null || isNaN(value)) return '';
     if (value === 0) return '';
-    return value.toLocaleString('ko-KR');
+    try {
+      const num = Number(value);
+      if (isNaN(num)) return '';
+      return num.toLocaleString('ko-KR');
+    } catch {
+      return '';
+    }
   };
 
   const handleFormattedInputChange = (
@@ -134,10 +141,17 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     setPortfolio((prev) => ({ ...prev, [field]: Math.max(0, value) }));
   };
 
-  // 포트폴리오 필드 표시값 포맷팅 (모바일 호환)
-  const formatPortfolioDisplay = (value: number): string => {
+  // 포트폴리오 필드 표시값 포맷팅 (모바일 호환, 안전장치 포함)
+  const formatPortfolioDisplay = (value: number | undefined | null): string => {
+    if (value === undefined || value === null || isNaN(value)) return '';
     if (value === 0) return '';
-    return value.toLocaleString('ko-KR');
+    try {
+      const num = Number(value);
+      if (isNaN(num)) return '';
+      return num.toLocaleString('ko-KR');
+    } catch {
+      return '';
+    }
   };
 
   const handleFormattedPortfolioChange = (
@@ -159,28 +173,31 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
+    <div className="bg-white text-gray-900 rounded-lg shadow-lg p-6 space-y-6">
       <div className="flex items-center gap-2 mb-4">
         <Calculator className="w-6 h-6 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-800">입력 정보</h2>
+        <h2 className="text-2xl font-bold text-gray-900">입력 정보</h2>
       </div>
 
       {/* 기본 정보 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">기본 정보</h3>
+        <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">기본 정보</h3>
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
+            <label className="block text-sm font-medium text-gray-900 mb-1 whitespace-nowrap">
               현재 나이
             </label>
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={userInput.currentAge}
-              onChange={(e) => handleInputChange('currentAge', Number(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={userInput.currentAge !== undefined && !isNaN(userInput.currentAge) ? String(userInput.currentAge) : ''}
+              onChange={(e) => {
+                const num = Number(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                handleInputChange('currentAge', num);
+              }}
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.currentAge && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -191,16 +208,19 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
+            <label className="block text-sm font-medium text-gray-900 mb-1 whitespace-nowrap">
               목표 나이 (FIRE)
             </label>
             <input
-              type="number"
+              type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={userInput.targetAge}
-              onChange={(e) => handleInputChange('targetAge', Number(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={userInput.targetAge !== undefined && !isNaN(userInput.targetAge) ? String(userInput.targetAge) : ''}
+              onChange={(e) => {
+                const num = Number(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                handleInputChange('targetAge', num);
+              }}
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.targetAge && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -211,7 +231,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
+            <label className="block text-sm font-medium text-gray-900 mb-1 whitespace-nowrap">
               목표 자산 (만원)
             </label>
             <input
@@ -220,7 +240,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatCurrencyDisplay(userInput.targetAssets)}
               onChange={(e) => handleFormattedInputChange('targetAssets', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.targetAssets && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -231,7 +251,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
+            <label className="block text-sm font-medium text-gray-900 mb-1 whitespace-nowrap">
               현재 자산 (만원)
             </label>
             <input
@@ -240,7 +260,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatCurrencyDisplay(userInput.currentAssets)}
               onChange={(e) => handleFormattedInputChange('currentAssets', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.currentAssets && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -251,7 +271,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
+            <label className="block text-sm font-medium text-gray-900 mb-1 whitespace-nowrap">
               월 저축액 (만원)
             </label>
             <input
@@ -260,7 +280,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatCurrencyDisplay(userInput.monthlySavings)}
               onChange={(e) => handleFormattedInputChange('monthlySavings', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.monthlySavings && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -272,7 +292,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
 
           <div>
             <div className="flex items-center gap-1 mb-1">
-              <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+              <label className="text-sm font-medium text-gray-900 whitespace-nowrap">
                 예상 연수익률 (%)
               </label>
               <div className="relative">
@@ -294,12 +314,15 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               </div>
             </div>
             <input
-              type="number"
+              type="text"
               inputMode="decimal"
-              step="0.1"
-              value={userInput.expectedReturnRate}
-              onChange={(e) => handleInputChange('expectedReturnRate', Number(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={userInput.expectedReturnRate !== undefined && !isNaN(userInput.expectedReturnRate) ? String(userInput.expectedReturnRate) : ''}
+              onChange={(e) => {
+                const cleaned = e.target.value.replace(/[^0-9.]/g, '');
+                const num = parseFloat(cleaned) || 0;
+                handleInputChange('expectedReturnRate', num);
+              }}
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.expectedReturnRate && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -313,13 +336,13 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
 
       {/* 포트폴리오 배분 */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+        <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
           사용자 포트폴리오 배분 (월 납입액, 만원)
         </h3>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               연금저축 (월 한도: {LEGAL_LIMITS.PENSION_IRP_MONTHLY}만원)
             </label>
             <input
@@ -328,7 +351,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatPortfolioDisplay(portfolio.pension)}
               onChange={(e) => handleFormattedPortfolioChange('pension', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
               연 한도: 1,800만원 (세액공제 한도: 600만원)
@@ -342,7 +365,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               IRP (연금저축 + IRP 합계 한도: {LEGAL_LIMITS.PENSION_IRP_MONTHLY}만원)
             </label>
             <input
@@ -351,7 +374,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatPortfolioDisplay(portfolio.irp)}
               onChange={(e) => handleFormattedPortfolioChange('irp', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
               연 한도: 1,800만원 (합산 세액공제 최대: 900만원)
@@ -371,7 +394,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               ISA (월 한도: {LEGAL_LIMITS.ISA_MONTHLY}만원)
             </label>
             <input
@@ -380,7 +403,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatPortfolioDisplay(portfolio.isa)}
               onChange={(e) => handleFormattedPortfolioChange('isa', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <p className="text-xs text-blue-600 mt-1">
               연 한도: 2,000만원 (총 누적 한도: 10,000만원)
@@ -394,7 +417,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               국내주식
             </label>
             <input
@@ -403,7 +426,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatPortfolioDisplay(portfolio.domestic)}
               onChange={(e) => handleFormattedPortfolioChange('domestic', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.domestic && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
@@ -414,7 +437,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               해외주식
             </label>
             <input
@@ -423,7 +446,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
               pattern="[0-9]*"
               value={formatPortfolioDisplay(portfolio.overseas)}
               onChange={(e) => handleFormattedPortfolioChange('overseas', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {errors.overseas && (
               <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
