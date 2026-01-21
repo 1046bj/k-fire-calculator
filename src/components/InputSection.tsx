@@ -10,16 +10,20 @@ interface InputSectionProps {
 
 // 천 단위 구분 기호 포맷팅 유틸리티 (정수로 반올림)
 const formatNumberWithCommas = (value: number | string): string => {
+  if (value === '' || value === null || value === undefined) return '';
   const numStr = typeof value === 'string' ? value.replace(/,/g, '') : value.toString();
+  if (numStr === '') return '';
   const num = parseFloat(numStr);
-  if (isNaN(num)) return '';
+  if (isNaN(num) || num < 0) return '';
   return Math.floor(num).toLocaleString('ko-KR');
 };
 
 const parseFormattedNumber = (value: string): number => {
-  const cleaned = value.replace(/,/g, '');
+  if (!value || value === '') return 0;
+  const cleaned = value.replace(/,/g, '').trim();
+  if (cleaned === '') return 0;
   const num = parseFloat(cleaned);
-  return isNaN(num) ? 0 : num;
+  return isNaN(num) ? 0 : Math.max(0, num);
 };
 
 export default function InputSection({ onCalculate }: InputSectionProps) {
@@ -122,7 +126,13 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: 'targetAssets' | 'currentAssets' | 'monthlySavings',
     value: string
   ) => {
-    const numValue = parseFormattedNumber(value);
+    // 숫자와 소수점, 콤마만 허용
+    const cleaned = value.replace(/[^0-9,]/g, '');
+    
+    // 콤마 제거 후 숫자 파싱
+    const numValue = parseFormattedNumber(cleaned);
+    
+    // 포맷팅된 값으로 표시
     const formatted = formatNumberWithCommas(numValue);
     
     setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
@@ -137,7 +147,13 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
     field: keyof Portfolio,
     value: string
   ) => {
-    const numValue = parseFormattedNumber(value);
+    // 숫자와 소수점, 콤마만 허용
+    const cleaned = value.replace(/[^0-9,]/g, '');
+    
+    // 콤마 제거 후 숫자 파싱
+    const numValue = parseFormattedNumber(cleaned);
+    
+    // 포맷팅된 값으로 표시
     const formatted = formatNumberWithCommas(numValue);
     
     setFormattedValues((prev) => ({ ...prev, [field]: formatted }));
@@ -163,7 +179,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
         
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
               현재 나이
             </label>
             <input
@@ -181,7 +197,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
               목표 나이 (FIRE)
             </label>
             <input
@@ -199,7 +215,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
               목표 자산 (만원)
             </label>
             <input
@@ -217,7 +233,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
               현재 자산 (만원)
             </label>
             <input
@@ -235,7 +251,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 whitespace-nowrap">
               월 저축액 (만원)
             </label>
             <input
@@ -253,11 +269,13 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-              예상 연 수익률 (%)
+            <div className="flex items-center gap-1 mb-1">
+              <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                예상 연수익률 (%)
+              </label>
               <div className="relative">
                 <Info 
-                  className="w-4 h-4 text-gray-400 hover:text-blue-600 cursor-help"
+                  className="w-4 h-4 text-gray-400 hover:text-blue-600 cursor-help flex-shrink-0"
                   onMouseEnter={() => setShowReturnRateTooltip(true)}
                   onMouseLeave={() => setShowReturnRateTooltip(false)}
                 />
@@ -272,7 +290,7 @@ export default function InputSection({ onCalculate }: InputSectionProps) {
                   </div>
                 )}
               </div>
-            </label>
+            </div>
             <input
               type="number"
               step="0.1"
